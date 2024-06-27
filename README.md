@@ -1,5 +1,7 @@
 # obsScene
 
+[README_EN](README_EN.md)
+
 ## 功能
 
 显示当前OBS的场景名称, 方便查看自动切换场景是否生效
@@ -19,7 +21,7 @@
 
 可以使用自己喜欢的webview平台嵌入, 需要删掉和`neutralino`相关的部分
 
-用tauri 打包了一个macos_x86版本
+用tauri 打包了一个macos\_x86版本
 
 ## obs设置
 
@@ -33,14 +35,14 @@
 
 macos(支持半透明特性): 
 
-![](./screens/1.jpg)
+![](./Screenshots/1.jpg)
 
-![](./screens/2.jpg)
+![](./Screenshots/2.jpg)
 
 windows(不支持半透明, 需要额外安装===edge webview2===):
 
-![](./screens/3.jpg)
+![](./Screenshots/3.jpg)
 
 macos + tauri : 
 
-![](./screens/4.jpg)
+![](./Screenshots/4.jpg)

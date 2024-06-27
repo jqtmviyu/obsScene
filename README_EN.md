@@ -11,7 +11,7 @@ Displays the current OBS scene name, making it easy to check if automatic scene 
 
 Uses OBS's built-in WebSocket communication and embeds an HTML page using `neutralino`.
 
-Thanks to the build-scripts project from neutralino.
+Thanks to the`build-scripts` project from `neutralino`.
 
 ## Portability
 
@@ -33,12 +33,15 @@ Therefore, it only supports the local `127.0.0.1:4444` without a password.
 
 macOS (supports transparency):
 
-![](./screens/1.jpg)
+![](./Screenshots/1.jpg)
 
-![](./screens/2.jpg)
+![](./Screenshots/2.jpg)
 
 Windows (does not support transparency, requires additional installation of Edge Webview2):
 
-![](./screens/3.jpg)
+![](./Screenshots/3.jpg)
 
 macOS + Tauri:
+
+
+![](./Screenshots/4.jpg)
