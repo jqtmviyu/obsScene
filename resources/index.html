@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>实时显示 OBS 场景</title>
+    <script src="./js/obs-websocket-js.js"></script>
+    <script src="./js/neutralino.js"></script>
+    <style>
+      /* windows
+      "width": 100,
+      "height": 55,
+      "minWidth": 100,
+      "minHeight": 55,
+      "useSavedState": true,
+      */
+
+      /* macos
+      "width": 124,
+      "height": 86,
+      "minWidth": 124,
+      "minHeight": 86,
+      "useSavedState": false,
+      */
+
+      /*清除内外边距,更改盒子模型*/
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background-color: rgba(255, 255, 255, 0.5);
+        padding-left: 4px;
+        -webkit-user-select: none; /* Chrome, Safari, Opera */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+      }
+      #drag-area {
+        cursor: move;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="drag-area">
+      <!-- <h2> OBS 场景显示 </h2> -->
+      <div id="click">状态：<span id="status">正在连接...</span></div>
+      <div>场景：<span id="currentScene">未知</span></div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        Neutralino.init()
+      })
+
+      const obs = new OBSWebSocket()
+      const reconnectInterval = 5000 // 重连间隔时间（毫秒）
+
+      async function connectToOBS() {
+        try {
+          await obs.connect('ws://127.0.0.1:4444')
+          console.log('已连接到 OBS WebSocket')
+          document.getElementById('status').textContent = '✅'
+
+          obs.on('CurrentProgramSceneChanged', onCurrentSceneChanged)
+          obs.once('ExitStarted', () => {
+            console.log('OBS started shutdown')
+            obs.off('CurrentSceneChanged', onCurrentSceneChanged)
+          })
+
+          // 监听连接关闭事件以触发重连
+          obs.on('ConnectionClosed', () => {
+            document.getElementById('status').textContent = '🚫'
+            console.log('连接关闭，准备重连...')
+            setTimeout(connectToOBS, reconnectInterval)
+          })
+        } catch (error) {
+          document.getElementById('status').textContent = '🐛'
+          console.error('无法连接到 OBS WebSocket:', error)
+          setTimeout(connectToOBS, reconnectInterval)
+        }
+      }
+
+      function onCurrentSceneChanged(event) {
+        console.log('Current scene changed to', event.sceneName)
+
+        if (event.sceneName.includes('隐私')) {
+          document.getElementById('currentScene').textContent = `❤️ ${event.sceneName}`
+          document.body.style.color = 'red'
+        } else {
+          document.getElementById('currentScene').textContent = `💚 ${event.sceneName}`
+          document.body.style.color = 'green'
+        }
+      }
+
+      connectToOBS()
+
+      /* 移动事件start */
+      let isDragging = false
+      let startX, startY
+      let windowX, windowY
+      let deltaX = 0
+      let deltaY = 0
+      let lastClickTime = 0
+      const doubleClickThreshold = 200 // 双击时间阈值，单位毫秒
+
+      const dragArea = document.getElementById('drag-area')
+
+      dragArea.addEventListener('mousedown', e => {
+        const currentTime = Date.now()
+        if (currentTime - lastClickTime < doubleClickThreshold) {
+          // 检测到双击，退出应用
+          Neutralino.app.exit()
+          return
+        }
+
+        lastClickTime = currentTime
+
+        isDragging = true
+        startX = e.clientX
+        startY = e.clientY
+
+        // 获取当前窗口的位置
+        Neutralino.window.getPosition().then(position => {
+          windowX = position.x
+          windowY = position.y
+        })
+
+        document.addEventListener('mousemove', onMouseMove)
+        document.addEventListener('mouseup', onMouseUp)
+      })
+
+      function onMouseMove(e) {
+        if (isDragging) {
+          deltaX = e.clientX - startX
+          deltaY = e.clientY - startY
+        }
+      }
+
+      function onMouseUp() {
+        if (isDragging) {
+          isDragging = false
+          // 移动窗口到最终位置
+          Neutralino.window.move(windowX + deltaX, windowY + deltaY)
+          document.removeEventListener('mousemove', onMouseMove)
+          document.removeEventListener('mouseup', onMouseUp)
+        }
+      }
+
+      /* 移动事件end */
+    </script>
+  </body>
+</html>
