@@ -21,9 +21,9 @@
 
 macos: 
 
-![](./screenshots/1.jpg)
+![](./screenshots/1.png)
 
 
 windows:
 
-![](./screenshots/2.jpg)
+![](./screenshots/2.png)
