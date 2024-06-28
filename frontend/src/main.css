@@ -1,0 +1,31 @@
+/*清除内外边距,更改盒子模型*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  -webkit-user-select: none; /* Chrome, Safari, Opera */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  font-size: 12px;
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
+}
+
+.draggable {
+  --wails-draggable: drag;
+  cursor: move;
+}
+
+.box {
+  margin: 10px 0 0 10px;
+}
